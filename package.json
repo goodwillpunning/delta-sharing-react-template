@@ -1,0 +1,26 @@
+{
+  "name": "delta-sharing-app-template",
+  "version": "1.0.0",
+  "description": "A ReactJS-based app template for Delta Sharing.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "client": "npm run start --prefix client",
+    "server": "nodemon server/index.js",
+    "dev": "concurrently \"npm run client\" \"npm run server\""
+  },
+  "proxy": "http://localhost:3001",
+  "keywords": [
+    "delta",
+    "delta sharing"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "concurrently": "^8.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}
