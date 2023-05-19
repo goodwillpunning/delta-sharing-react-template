@@ -7,7 +7,7 @@ function App() {
   let [payload, setData] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api")
+    fetch('/api')
       .then(response => response.json())
       .then(
         (data) => {
