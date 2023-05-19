@@ -10,7 +10,6 @@
     "server": "nodemon server/index.js",
     "dev": "concurrently \"npm run client\" \"npm run server\""
   },
-  "proxy": "http://localhost:3001",
   "keywords": [
     "delta",
     "delta sharing"
@@ -21,6 +20,7 @@
     "body-parser": "^1.20.2",
     "concurrently": "^8.0.1",
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6"
   }
 }
