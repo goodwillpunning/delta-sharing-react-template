@@ -1,33 +1,39 @@
 import React, {useState, useEffect} from 'react';
-import logo from "./logo.svg";
-import "./App.css";
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
+import ShareComponent from './components/ShareComponent';
+import './App.css';
 
 function App() {
-
-  let [payload, setData] = useState(null);
-
+  let [sharesResponse, setSharesResponse] = useState(null);
+  // Fetch the shared datasets!
   useEffect(() => {
-    fetch('/api')
+    fetch('/getShares')
       .then(response => response.json())
       .then(
-        (data) => {
-          setData(data)
+        (response) => {
+          setSharesResponse(response);
         },
         (error) => {
-          console.log("Uh-oh!");
           console.log(error.message);
-        }
-      )
-  }, [])
-
+        });
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>{!payload ? "Loading..." : payload.message}</p>
-      </header>
-    </div>
-  );
+    <Container>
+      <Row>
+        <Col xs={4}><h2>Shares</h2></Col>
+        <Col>
+          {sharesResponse ?
+              sharesResponse.shares.map((share) => {
+                return (<ShareComponent key={share} name={share} />);
+              })
+              : null}
+        </Col>
+      </Row>
+    </Container>
+    );
 }
 
 export default App;
