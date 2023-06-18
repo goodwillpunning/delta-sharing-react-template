@@ -1,17 +1,25 @@
+import Button from 'react-bootstrap/Button';
+
+function trimShareName(name) {
+    let output = name;
+    if (name.length > 22)
+        output = name.substring(0, 19) + '...';
+    return output;
+}
 function ShareComponent(props) {
     return (
-        <div id={props.name} className="share-card" onClick={(e) => {console.log(e.target.name);}}>
+        <div id={props.name} className="share-card">
             {props.imageURL ?
                 (
                     <img className="share-img" alt="Share" src={props.imageURL} />
                 ) : (
                     <img className="share-img" alt="Share"
-                         src="https://user-images.githubusercontent.com/1446829/144671151-b095e1b9-2d24-4d3b-b3c6-a7041e491077.png" />
+                         src="delta-sharing-logo.png" />
                 )  
             }
-            <h4>
-                {props.name ? (props.name) : ('Untitled')}
-            </h4>
+            <strong>
+                {props.name ? (trimShareName(props.name)) : ('Untitled')}
+            </strong>
             <p>
                 {props.description ?
                 (
@@ -20,6 +28,9 @@ function ShareComponent(props) {
                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
                 )}
             </p>
+            <Button id={props.name + '_btn'} variant="primary" size="sm" onClick={props.buttonClick}>
+                View
+            </Button>
         </div>
     );
 }

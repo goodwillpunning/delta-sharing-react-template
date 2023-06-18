@@ -5,7 +5,9 @@ const {
   DeltaSharingProfile,
   Share,
   Schema,
-  Table
+  Table,
+  DeltaSharingReader,
+  DataSharingRestClient
 } = require('delta-sharing');
 const jsonString = `
 {
@@ -15,6 +17,7 @@ const jsonString = `
 }
 `;
 const sharingProfile = DeltaSharingProfile.fromJson(jsonString);
+const restClient = new DataSharingRestClient(sharingProfile);
 
 // Create a Sharing Client to interact with the Sharing Server
 const client = new SharingClient(sharingProfile);
@@ -27,7 +30,7 @@ app.use(cors());
 app.get('/getShares', (req, res) => {
   // List all available shares
   client.listSharesAsync().then(function(shares) {
-    var sharesList = [];
+    let sharesList = [];
     shares.map(function(share) {
       sharesList.push(share.shareName.toString());
     });
@@ -35,14 +38,36 @@ app.get('/getShares', (req, res) => {
    })
 });
 
-app.get('/getSchemas', (req, res) => {
+app.get('/getTables', (req, res) => {
+  // TODO: parse share name from request
+  const shareName = 'delta_sharing'
+  let schemasList = [];
+  let tablesList = [];
   const share = new Share('delta_sharing');
-  client.listSchemasAsync(share).then(function(schemas) {
-    var schemasList = [];
-    schemas.map(function(schema) {
+  // First, list all the available schemas
+  client.listSchemasAsync(share).then((schemas) => {
+    schemas.forEach((schema) => {
       schemasList.push(schema.schemaName.toString());
+        // Next, list the available tables under each schema
+        schemasList.forEach((schemaName) => {
+          const schemaObject = new Schema(schemaName, shareName);
+          client.listTablesAsync(schemaObject).then((tables) => {
+            tables.map(function(table) {
+              tablesList.push(table.tableName.toString());
+            });
+            res.json({ tables: tablesList });
+          })
+        });
     });
-    res.json({ schemas: schemasList});
+  })
+});
+
+app.get('/getDataFrame', (req, res) => {
+  // TODO: get table name from request
+  const table = new Table('boston-housing', 'delta_sharing', 'default');
+  const reader = new DeltaSharingReader(table, restClient);
+  reader.createDataFrame().then(function(df) {
+    res.json({ dataframe: df })
   })
 });
 

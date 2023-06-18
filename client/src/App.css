@@ -3,14 +3,7 @@
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+  height: 65px;
 }
 
 .App-header {
@@ -24,17 +17,21 @@
   color: #3D3D3D;
 }
 
-.App-link {
-  color: #61dafb;
+.App-loading-img {
+  display: inline;
+  width: 200px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.App-body {
+  margin-top: 100px;
+}
+
+/* Share card */
+.shares-title {
+  padding-top: 25px;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-bottom: 15px;
 }
 
 .share-card {
@@ -44,11 +41,11 @@
   width: 200px;
   margin: 25px;
   padding: 25px;
-  cursor: pointer;
   background: #fff;
   color: #20272e;
   font-size: 13px;
   line-height: 1.5715;
+  float: left;
 }
 
 .share-card:hover {
@@ -57,4 +54,95 @@
 
 .share-img {
   width: 50px;
+  display: block;
+  margin: auto;
+  margin-bottom: 15px;
+}
+
+.share-details-close-btn {
+  margin-top: 25px;
+  float: right;
+}
+
+/* Schema card */
+.schemas-title {
+  padding-top: 25px;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-bottom: 15px;
+}
+
+.schema-card {
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
+  min-height: 150px;
+  width: 200px;
+  margin: 25px;
+  padding: 25px;
+  background: #fff;
+  color: #20272e;
+  font-size: 13px;
+  line-height: 1.5715;
+  float: left;
+}
+
+.schema-card:hover {
+  box-shadow: 0 0 11px rgba(33,33,33,.2); 
+}
+
+.schema-img {
+  width: 50px;
+  display: block;
+  margin: auto;
+  margin-bottom: 15px;
+}
+
+/* Table card */
+.tables-title {
+  padding-top: 25px;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-bottom: 15px;
+}
+
+.table-card {
+  border: 1px solid #d3d3d3;
+  border-radius: 4px;
+  min-height: 150px;
+  width: 250px;
+  margin: 25px;
+  padding: 25px;
+  background: #fff;
+  color: #20272e;
+  font-size: 13px;
+  line-height: 1.5715;
+  float: left;
+}
+
+.table-card:hover {
+  box-shadow: 0 0 11px rgba(33,33,33,.2); 
+}
+
+.table-img {
+  width: 50px;
+  display: block;
+  margin: auto;
+  margin-bottom: 15px;
+}
+
+.table-card .name {
+  font-weight: bold;
+  max-width: 200px;
+}
+
+/* Sample data */
+.sample-data-close-btn {
+  margin-top: 25px;
+  float: right;
+}
+
+.sample-data-title {
+  padding-top: 25px;
+  padding-left: 25px;
+  padding-bottom: 15px;
 }
