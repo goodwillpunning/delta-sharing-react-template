@@ -146,3 +146,8 @@
   padding-left: 25px;
   padding-bottom: 15px;
 }
+
+.output-warning {
+  padding-left: 25px;
+  font-size: 14px;
+}

@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors');
+const bodyParser = require('body-parser');
 const {
   SharingClient,
   DeltaSharingProfile,
@@ -25,7 +25,14 @@ const client = new SharingClient(sharingProfile);
 const PORT = process.env.PORT || 3001;
 
 const app = express();
-app.use(cors());
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+
+function transpose(matrix) {
+  return matrix.reduce((prev, next) => next.map((item, i) =>
+    (prev[i] || []).concat(next[i])
+  ), []);
+}
 
 app.get('/getShares', (req, res) => {
   // List all available shares
@@ -38,12 +45,11 @@ app.get('/getShares', (req, res) => {
    })
 });
 
-app.get('/getTables', (req, res) => {
-  // TODO: parse share name from request
-  const shareName = 'delta_sharing'
+app.post('/getTables', (req, res) => {
+  const shareName = req.body.shareName;
   let schemasList = [];
   let tablesList = [];
-  const share = new Share('delta_sharing');
+  const share = new Share(shareName);
   // First, list all the available schemas
   client.listSchemasAsync(share).then((schemas) => {
     schemas.forEach((schema) => {
@@ -53,7 +59,9 @@ app.get('/getTables', (req, res) => {
           const schemaObject = new Schema(schemaName, shareName);
           client.listTablesAsync(schemaObject).then((tables) => {
             tables.map(function(table) {
-              tablesList.push(table.tableName.toString());
+              const schemaName = table.schema.toString();
+              const tableName = table.tableName.toString();
+              tablesList.push(schemaName + '.' + tableName);
             });
             res.json({ tables: tablesList });
           })
@@ -62,17 +70,41 @@ app.get('/getTables', (req, res) => {
   })
 });
 
-app.get('/getDataFrame', (req, res) => {
-  // TODO: get table name from request
-  const table = new Table('boston-housing', 'delta_sharing', 'default');
+app.post('/getTableRows', (req, res) => {
+  const shareName = req.body.shareName;
+  const schemaName = req.body.schemaName;
+  const tableName = req.body.tableName;
+  const table = new Table(tableName, shareName, schemaName);
+  console.log('Loading table: ' + table.toString());
   const reader = new DeltaSharingReader(table, restClient);
-  reader.createDataFrame().then(function(df) {
-    res.json({ dataframe: df })
+  reader.createDataArray().then(function(tableRows) {
+    // Truncate the output to the first 100 rows
+    if (tableRows.length > 100) 
+      tableRows = tableRows.slice(0, 100);
+    // Create a table header from dictionary keys
+    let rawKeys = Object.keys(tableRows[0]);
+    if (rawKeys.length > 5)
+      rawKeys = rawKeys.slice(0, 5);
+    const headerContent = [];
+    rawKeys.forEach((col) => {
+      headerContent.push(['<b>' + col + '</b>']);
+    });
+    // Parse the row content
+    const parsedRows = [];
+    tableRows.forEach((row) => {
+      const rowArr = [];
+      rawKeys.forEach((key) => {
+          if (row.hasOwnProperty(key))
+            rowArr.push(row[key]);
+      });
+      parsedRows.push(rowArr);
+    });
+    // Send back a response containing header and rows
+    res.json({
+      header: headerContent,
+      values: transpose(parsedRows)
+    });
   })
-});
-
-app.get('/hello', (req, res) => {
-  res.json({ message: "Well hellooo there!" });
 });
 
 app.listen(PORT, () => {

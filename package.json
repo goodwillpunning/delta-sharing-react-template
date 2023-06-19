@@ -1,6 +1,6 @@
 {
-  "name": "delta-sharing-app-template",
-  "version": "1.0.0",
+  "name": "delta-sharing-react-template",
+  "version": "0.1.0",
   "description": "A React template for building Delta Sharing Apps.",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,8 @@
   },
   "keywords": [
     "delta",
-    "delta sharing"
+    "delta sharing",
+    "data-sharing"
   ],
   "author": "",
   "license": "Apache-2.0",
