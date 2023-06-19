@@ -19,8 +19,7 @@ function App() {
   let [tableName, setTableName] = useState(null);
   // Rows state
   let [showRows, setShowRows] = useState(false);
-  let [dataframe, setDataframe] = useState(null);
-
+  let [tableRows, setTableRows] = useState(null);
 
   function openShare(e) {
     let parsedShareName = e.target.id.replace('_btn', '');
@@ -30,7 +29,14 @@ function App() {
     setShowTables(true);
     setShareName(parsedShareName);
     // Fetch a list of available tables in Share
-    fetch('/getTables')
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ shareName: parsedShareName }),
+    }
+    fetch('/getTables', options)
     .then(response => response.json())
     .then(
       (response) => {
@@ -51,17 +57,44 @@ function App() {
   }
 
   function openTable(e) {
-    let parsedTableName = e.target.id.replace('_btn', '');
-    console.log('Opening table: ' + parsedTableName);
+    let parsedTableName = e.target.id.replace('_btn', '').split('.')[1];
+    let parsedSchemaName = e.target.id.replace('_btn', '').split('.')[0];
+    console.log('Opening table: ' + parsedTableName)
     setShowTables(false);
     setShowRows(true);
     setTableName(parsedTableName);
     // Fetch a the sample data
-    fetch('/getDataFrame')
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        shareName: shareName,
+        schemaName: parsedSchemaName,
+        tableName: parsedTableName }),
+    }
+    fetch('/getTableRows', options)
     .then(response => response.json())
     .then(
       (response) => {
-        setDataframe(response);
+        const plotlyData = [{
+          type: 'table',
+          header: {
+            values: response.header,
+            align: "center",
+            line: {width: 1, color: 'black'},
+            fill: {color: "grey"},
+            font: {family: "Arial", size: 12, color: "white"}
+          },
+          cells: {
+            values: response.values,
+            align: "center",
+            line: {color: "black", width: 1},
+            font: {family: "Arial", size: 11, color: ["black"]}
+          }
+        }]
+        setTableRows(plotlyData);
       },
       (error) => {
         console.log(error.message);
@@ -74,7 +107,7 @@ function App() {
     setShowRows(false);
     setShowTables(true);
     setTableName(null);
-    setDataframe(null);
+    setTableRows(null);
   }
 
   // Fetch the shared datasets!
@@ -113,7 +146,7 @@ function App() {
         {showRows ? (
           <SampleDataComponent
             name={tableName}
-            dataframe={dataframe}
+            tableRows={tableRows}
             closeClick={closeTable.bind(this)} />
         ) : (
           <></>
